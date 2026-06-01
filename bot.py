@@ -176,10 +176,10 @@ async def add(interaction: discord.Interaction, user: discord.Member, name: str 
 
     role_5 = get_role_5(interaction.guild)
 
-    # IF INSIDE TICKET → ADD USER
-    if interaction.channel.name.startswith("TICKET-"):
+    # IF INSIDE AN EXISTING TICKET → ADD USER TO IT
+    if str(interaction.channel.id) in data["tickets"]:
 
-        ticket_id = interaction.channel.name.replace("TICKET-", "")
+        ticket_id = data["tickets"][str(interaction.channel.id)]
 
         await interaction.channel.set_permissions(
             user,
@@ -188,7 +188,7 @@ async def add(interaction: discord.Interaction, user: discord.Member, name: str 
             read_message_history=True
         )
 
-        # ✅ GIVE ROLE 5
+        # GIVE ROLE 5
         if role_5 and role_5 not in user.roles:
             await user.add_roles(role_5, reason="Added to ticket")
 
@@ -242,7 +242,7 @@ async def add(interaction: discord.Interaction, user: discord.Member, name: str 
     data["tickets"][str(channel.id)] = ticket_number
     save_data(data)
 
-    # ✅ GIVE ROLE 5 ON TICKET CREATION
+    # GIVE ROLE 5 ON TICKET CREATION
     if role_5 and role_5 not in user.roles:
         await user.add_roles(role_5, reason="Ticket created")
 
